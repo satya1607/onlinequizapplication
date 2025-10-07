@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar Example</title>
+    <style>
+        /* Basic navbar styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+.navbar {
+            display: flex;
+            justify-content: space-between; /* Space between left and right items */
+            align-items: center;
+              background-color: #333;
+            padding: 10px 20px;
+        }
+.navbar.brand {
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+        }
+.navbar.nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 16px;
+        }
+.navbar.nav-links a:hover {
+            text-decoration: underline;
+        }
+        </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <!-- Left Corner: Brand / Heading -->
+    <a href="/" class="brand">MyApp</a>
+
+    <!-- Right Corner: Login & Signup -->
+    <div class="nav-links">
+        <!-- Using Thymeleaf 'th:href' to generate dynamic URLs -->
+        
+        <a th:href="@{/createTest}">Dashboard</a>
+        <a th:href="@{/viewResults}">View Results</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</nav>
+<div>
+    <h1>Welcome to Admin Dashboard</h1>
+    <p>Use the navbar above to navigate</p>
+</div>
+
+</body>
+</html>

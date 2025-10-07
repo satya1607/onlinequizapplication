@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Question</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>Add Question</h2>
+    <form th:action="@{/api/test/postquestion}" th:object="${dto}" method="post">     
+        <div class="mb-3">
+            <label>Question Title</label>
+            <input type="text" th:field="*{questionText}" class="form-control" placeholder="Question" required/>
+        </div>
+
+        <div class="mb-3">
+            <label>Option A</label>
+            <input type="text" th:field="*{optionA}" class="form-control" placeholder="OptionA" required/>
+        </div>
+        <div class="mb-3">
+            <label>Option B</label>
+            <input type="text" th:field="*{optionB}" class="form-control" placeholder="OptionB" required/>
+        </div>
+        
+        <div class="mb-3">
+            <label>Option C</label>
+            <input type="text" th:field="*{optionC}" class="form-control" placeholder="OptionC" required/>
+        </div>
+         
+         <div class="mb-3">
+            <label>Option D</label>
+            <input type="text" th:field="*{optionD}" class="form-control" placeholder="OptionD" required/>
+        </div>
+        <div class="mb-3">
+            <label>Correct Option</label>
+            <input type="text" th:field="*{correctOption}" class="form-control" placeholder="Correct Option" required/>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </form>
+
+</div>
+</body>
+</html>
