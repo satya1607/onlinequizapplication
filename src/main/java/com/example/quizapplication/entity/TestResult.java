@@ -16,7 +16,7 @@ public class TestResult {
 	private double percentage;
 	
 	@DBRef
-	private Test test;
+	private TestPOJO testPOJO;
 	
 	@DBRef
 	private User user;
@@ -27,7 +27,7 @@ public class TestResult {
 		dto.setTotalQuestions(totalQuestions);
 		dto.setCorrectAnswers(correctAnswers);
 		dto.setPercentage(percentage);
-		dto.setTestName(test.getTitle());
+		dto.setTestName(testPOJO.getTitle());
 		dto.setUserName(user.getName());
 		
 		return dto;
@@ -57,11 +57,11 @@ public class TestResult {
 	public void setPercentage(double percentage) {
 		this.percentage = percentage;
 	}
-	public Test getTest() {
-		return test;
+	public TestPOJO getTestPOJO() {
+		return testPOJO;
 	}
-	public void setTest(Test test) {
-		this.test = test;
+	public void setTestPOJO(TestPOJO testPOJO) {
+		this.testPOJO = testPOJO;
 	}
 	public User getUser() {
 		return user;

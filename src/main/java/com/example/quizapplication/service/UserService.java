@@ -8,5 +8,6 @@ public interface UserService {
     void createUser(User user);
     Boolean hasUserWithEmail(String email);
     User login(String email);
+    void createAdminUser();
 //    User login(User user);
 }

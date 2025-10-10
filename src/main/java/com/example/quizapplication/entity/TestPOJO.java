@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.example.quizapplication.dto.TestDTO;
 
-@Document(collection="Test")
-public class Test {
+@Document(collection="TestPOJO")
+public class TestPOJO {
 	
 	@Id
     private String id;

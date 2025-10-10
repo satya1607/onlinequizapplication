@@ -14,7 +14,7 @@ import com.example.quizapplication.dto.TestDTO;
 import com.example.quizapplication.dto.TestDetailsDTO;
 import com.example.quizapplication.dto.TestResultDTO;
 import com.example.quizapplication.entity.Question;
-import com.example.quizapplication.entity.Test;
+import com.example.quizapplication.entity.TestPOJO;
 import com.example.quizapplication.entity.TestResult;
 import com.example.quizapplication.entity.User;
 import com.example.quizapplication.repository.QuestionRepository;
@@ -36,14 +36,14 @@ public class TestServiceImpl implements TestService{
 	@Autowired
 	private UserRepository userRepository;
 	
-	public void createTest(Test test) {
+	public void createTest(TestPOJO testPOJO) {
 //		Test test=new Test();
 //		test.setId(dto.getId());
 //		test.setTitle(dto.getTitle());
 //		test.setDescription(dto.getDescription());
 //		test.setTime(dto.getTime());
 		
-		 testRepository.save(test);
+		 testRepository.save(testPOJO);
 	}
 	public Question addQuestionInTest(Question dto) {
 //		Optional<Test> optionalTest=testRepository.findById(id);
@@ -61,15 +61,16 @@ public class TestServiceImpl implements TestService{
 		}
 //		throw new EntityNotFoundException("Test Not Found");
 //	}
-	public List<Test> getAllTests(){
+	public List<TestPOJO> getAllTests(){
 		return testRepository.findAll();
 //				.stream().peek(
 //				test->test.setTime(test.getQuestions().size()*test.getTime())).
 //				collect(Collectors.toList());
 	}
-	public Optional<Test> getAllQuestionsByTest(String id) {
-//		Optional<Test> optionalTest=
+	public Optional<TestPOJO> getAllQuestionsByTest(String id) {
+		
 				return testRepository.findById(id);
+				
 //		TestDetailsDTO testDetailsDTO=new TestDetailsDTO();
 //		if(optionalTest.isPresent()) {
 //			TestDTO testDTO=optionalTest.get().getDto();
@@ -86,7 +87,7 @@ public class TestServiceImpl implements TestService{
 	}
 	
 	public TestResultDTO submitTest(SubmitTestDTO request) {
-		Test test=testRepository.findById(request.getTestId()).orElseThrow(()->new EntityNotFoundException("Test Not Found"));
+		TestPOJO testPOJO=testRepository.findById(request.getTestId()).orElseThrow(()->new EntityNotFoundException("Test Not Found"));
 		User user=userRepository.findById(request.getUserId()).orElseThrow(()->new EntityNotFoundException("User Not Found"));
 		
 		int correctAnswers=0;
@@ -97,11 +98,11 @@ public class TestServiceImpl implements TestService{
 			correctAnswers++;
 		}
 		}
-		int totalQuestions=test.getQuestions().size();
+		int totalQuestions=testPOJO.getQuestions().size();
 		double percentage=((double)correctAnswers/totalQuestions)*100;
 		 
 		TestResult testResult=new TestResult();
-		testResult.setTest(test);
+		testResult.setTestPOJO(testPOJO);
 		testResult.setUser(user);
 		testResult.setTotalQuestions(totalQuestions);
 		testResult.setCorrectAnswers(correctAnswers);

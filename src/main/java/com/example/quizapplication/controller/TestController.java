@@ -21,7 +21,7 @@ import com.example.quizapplication.dto.TestDTO;
 import com.example.quizapplication.dto.TestDetailsDTO;
 import com.example.quizapplication.dto.TestResultDTO;
 import com.example.quizapplication.entity.Question;
-import com.example.quizapplication.entity.Test;
+import com.example.quizapplication.entity.TestPOJO;
 import com.example.quizapplication.entity.TestResult;
 import com.example.quizapplication.repository.TestRepository;
 import com.example.quizapplication.service.TestService;
@@ -37,13 +37,13 @@ public class TestController {
 	
 	@GetMapping("/createTest")
 	public String showCreateTestForm(Model model) {
-		model.addAttribute("test", new Test());
+		model.addAttribute("test", new TestPOJO());
 		return "createtest";
 	}
 	@PostMapping("/createTest")
-	public String createTest(@ModelAttribute Test test){
+	public String createTest(@ModelAttribute TestPOJO testPOJO){
 		
-		testRepository.save(test);
+		testRepository.save(testPOJO);
 //		testService.createTest(test);
 //		}catch(Exception e) {
 //			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
@@ -64,10 +64,10 @@ public class TestController {
 		
 	}
 	@GetMapping("/admindashboard")
-	public String getAllTest(Model model,Test test){
+	public String getAllTest(Model model,TestPOJO testPOJO){
 //		List<PropertyDetails> list = service.getAllProperties();
 //		  model.addAttribute("list", list);}
-			List<Test> list=testService.getAllTests();
+			List<TestPOJO> list=testService.getAllTests();
 		    model.addAttribute("list",list);
 		    System.out.println(list);
 			return "admindashboard";
@@ -75,8 +75,8 @@ public class TestController {
 	
 	@GetMapping("/viewtest/{id}")
 	public String getAllQuestions(@PathVariable String id,Model model){
-		Optional<Test> list=testService.getAllQuestionsByTest(id);
-		model.addAttribute("list",list);
+		 Optional<TestPOJO> questions =testService.getAllQuestionsByTest(id);
+		model.addAttribute("questions",questions);
 		return "viewtest";
 		
 	}

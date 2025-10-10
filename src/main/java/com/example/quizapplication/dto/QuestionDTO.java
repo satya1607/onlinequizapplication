@@ -2,7 +2,7 @@ package com.example.quizapplication.dto;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import com.example.quizapplication.entity.Test;
+import com.example.quizapplication.entity.TestPOJO;
 
 public class QuestionDTO {
 

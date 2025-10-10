@@ -9,14 +9,14 @@ import com.example.quizapplication.dto.TestDTO;
 import com.example.quizapplication.dto.TestDetailsDTO;
 import com.example.quizapplication.dto.TestResultDTO;
 import com.example.quizapplication.entity.Question;
-import com.example.quizapplication.entity.Test;
+import com.example.quizapplication.entity.TestPOJO;
 import com.example.quizapplication.entity.TestResult;
 
    public interface TestService{
-	void createTest(Test test);
+	void createTest(TestPOJO testPOJO);
 	Question addQuestionInTest(Question dto);
-	List<Test> getAllTests();
-	Optional<Test> getAllQuestionsByTest(String id);
+	List<TestPOJO> getAllTests();
+	Optional<TestPOJO> getAllQuestionsByTest(String id);
 	TestResultDTO submitTest(SubmitTestDTO request);
 	List<TestResult> getAllTestResults();
 	List<TestResultDTO> getAllTestResultsOfUser(Long userId);

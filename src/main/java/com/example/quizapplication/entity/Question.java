@@ -26,7 +26,7 @@ public class Question {
 	private String optionD;
 	private String correctOption;
 	@DBRef
-	private Test test;
+	private TestPOJO testPOJO;
 	
 	public QuestionDTO getDto() {
 		QuestionDTO dto=new QuestionDTO();
@@ -89,11 +89,11 @@ public class Question {
 	public void setCorrectOption(String correctOption) {
 		this.correctOption = correctOption;
 	}
-	public Test getTest() {
-		return test;
+	public TestPOJO getTest() {
+		return testPOJO;
 	}
-	public void setTest(Test test) {
-		this.test = test;
+	public void setTest(TestPOJO testPOJO) {
+		this.testPOJO = testPOJO;
 	}
 	
 }
