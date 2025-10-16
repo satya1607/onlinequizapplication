@@ -66,26 +66,8 @@ public class UserController {
 	        return "login";
 	    }
 	 
-//	 @GetMapping("/admindashboard")
-//	    public String showAdminDashboard(){
-//	        return "admindashboard";
-//	    }
-	
-//	@PostMapping({"/login"})
-//	public String login(@ModelAttribute User user,Model model){
-//		User dbUser=userService.login(user.getEmail());
-//		
-//		if (dbUser == null) {
-//            model.addAttribute("error", "Invalid email or password!");
-//            return "login"; // stay on login page if failed
-//        }
 
-        // redirect based on role
-//        if ("ADMIN".equals(dbUser.getRole())) {
-//            return "redirect:/admindashboard";
-//        } else {
-//            return "redirect:/userdashboard";
-//        }
+	 
 		
 //		if(dbUser==null) 
 //			return "Wrong conditionals";

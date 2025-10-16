@@ -2,6 +2,7 @@ package com.example.quizapplication.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,140 +28,142 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @WebMvcTest(TestController.class)
 class TestControllerTest {
 
-	@Autowired
-    private MockMvc mockMvc;
+	 @Autowired
+	    private MockMvc mockMvc;
 
-    @MockBean
-    private TestService testService;
+	    @MockBean
+	    private TestService testService;
 
-    @MockBean
-    private TestRepository testRepository;
+	    private TestPOJO testPOJO;
+	    private Question question;
+	    private TestResult testResult;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	    @BeforeEach
+	    void setUp() {
+	        // Sample Test
+	        testPOJO = new TestPOJO();
+	        testPOJO.setSequenceNumber(1);
+	        testPOJO.setTitle("Sample Test");
+	        testPOJO.setQuestions(new ArrayList<>());
 
-    // ---------- Thymeleaf View Endpoints ----------
+	        // Sample Question
+	        question = new Question();
+	        question.setId("1");
+	        question.setQuestionText("Sample Question?");
+	        question.setOptionA("A");
+	        question.setOptionB("B");
+	        question.setOptionC("C");
+	        question.setOptionD("D");
+	        question.setCorrectOption("A");
+	        question.setTest(testPOJO);
+	        testPOJO.getQuestions().add(question);
 
-    @Test
-    void showCreateTestForm_shouldReturnCreateTestView() throws Exception {
-        mockMvc.perform(get("/api/test/createTest"))
-               .andExpect(status().isOk())
-               .andExpect(view().name("createtest"))
-               .andExpect(model().attributeExists("test"));
-    }
+	        // Sample TestResult
+	        testResult = new TestResult();
+	        testResult.setTestName("Sample Test");
+	        testResult.setUserName("John Doe");
+	        testResult.setTotalQuestions(1);
+	        testResult.setCorrectAnswers(1);
+	        testResult.setPercentage(100.0);
+	    }
 
-    @Test
-    void createTest_shouldSaveTestAndReturnAdminDashboard() throws Exception {
-        TestPOJO test = new TestPOJO();
-        when(testRepository.save(any(TestPOJO.class))).thenReturn(test);
+	    @Test
+	    void testGetAdminDashboard() throws Exception {
+	        when(testService.getAllTests()).thenReturn(Collections.singletonList(testPOJO));
 
-        mockMvc.perform(post("/api/test/createTest")
-               .flashAttr("test", test))
-               .andExpect(status().isOk())
-               .andExpect(view().name("admindashboard"));
+	        mockMvc.perform(get("/api/test/admindashboard"))
+	                .andExpect(status().isOk())
+	                .andExpect(model().attributeExists("list"))
+	                .andExpect(view().name("admindashboard"));
+	    }
 
-        verify(testRepository, times(1)).save(any(TestPOJO.class));
-    }
+	    @Test
+	    void testShowCreateTestForm() throws Exception {
+	        mockMvc.perform(get("/api/test/createTest"))
+	                .andExpect(status().isOk())
+	                .andExpect(model().attributeExists("test"))
+	                .andExpect(view().name("createtest"));
+	    }
 
-    @Test
-    void addQuestion_shouldReturnAddQuestionView() throws Exception {
-        mockMvc.perform(get("/api/test/question"))
-               .andExpect(status().isOk())
-               .andExpect(view().name("addquestion"))
-               .andExpect(model().attributeExists("dto"));
-    }
+	    @Test
+	    void testShowAddQuestionForm() throws Exception {
+	        mockMvc.perform(get("/api/test/question/{sequenceNumber}", 1))
+	                .andExpect(status().isOk())
+	                .andExpect(model().attributeExists("question"))
+	                .andExpect(model().attributeExists("sequenceNumber"))
+	                .andExpect(view().name("addquestion"));
+	    }
 
-    @Test
-    void addQuestionInTest_shouldCallServiceAndReturnAdminDashboard() throws Exception {
-        Question question = new Question();
+	    @Test
+	    void testAddQuestionToTest() throws Exception {
+	        mockMvc.perform(post("/api/test/question/{sequenceNumber}", 1)
+	                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+	                        .param("questionText", "Sample Question?")
+	                        .param("optionA", "A")
+	                        .param("optionB", "B")
+	                        .param("optionC", "C")
+	                        .param("optionD", "D")
+	                        .param("correctOption", "A"))
+	                .andExpect(status().is3xxRedirection())
+	                .andExpect(redirectedUrl("/api/test/admindashboard"));
+	    }
 
-        mockMvc.perform(post("/api/test/postquestion")
-                .flashAttr("dto", question))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admindashboard"));
+	    @Test
+	    void testViewTest() throws Exception {
+	        when(testService.getQuestionsByTestNumber(1)).thenReturn(Collections.singletonList(question));
 
-        verify(testService, times(1)).addQuestionInTest(any(Question.class));
-    }
+	        mockMvc.perform(get("/api/test/viewtest/{sequenceNumber}", 1))
+	                .andExpect(status().isOk())
+	                .andExpect(model().attributeExists("questions"))
+	                .andExpect(view().name("viewtest"));
+	    }
 
-    @Test
-    void getAllTest_shouldReturnAdminDashboardWithTests() throws Exception {
-        List<TestPOJO> tests = Arrays.asList(new TestPOJO(), new TestPOJO());
-        when(testService.getAllTests()).thenReturn(tests);
+	    @Test
+	    void testTakeTest() throws Exception {
+	        when(testService.getTestBySequenceNumber(1)).thenReturn(testPOJO);
+	        when(testService.getQuestionsByTestNumber(1)).thenReturn(Collections.singletonList(question));
 
-        mockMvc.perform(get("/api/test/admindashboard"))
-               .andExpect(status().isOk())
-               .andExpect(view().name("admindashboard"))
-               .andExpect(model().attributeExists("list"));
-    }
+	        mockMvc.perform(get("/api/test/taketest/{sequenceNumber}", 1))
+	                .andExpect(status().isOk())
+	                .andExpect(model().attributeExists("test"))
+	                .andExpect(model().attributeExists("questions"))
+	                .andExpect(view().name("taketest"));
+	    }
 
-//    @Test
-//    void getAllQuestions_shouldReturnViewTest() throws Exception {
-//    	TestPOJO test = new TestPOJO();
-////        test.setQuestions(); // so Thymeleaf finds it
-//        when(testService.getAllQuestionsByTest("1")).thenReturn(Optional.of(test));
-//
-//        mockMvc.perform(get("/api/test/viewtest/1"))
-//               .andExpect(status().isOk())
-//               .andExpect(view().name("viewtest"))
-//               .andExpect(model().attributeExists("list"));
-//    	
-//        
-//    }
+	    @Test
+	    void testSubmitTest() throws Exception {
+	        Map<String, String> answers = new HashMap<>();
+	        answers.put("question_1", "A");
 
-//    @Test
-//    void getAllTestResults_shouldReturnViewResult() throws Exception {
-//        List<TestResult> results = Arrays.asList(new TestResult());
-//        when(testService.getAllTestResults()).thenReturn(results);
-//
-//        mockMvc.perform(get("/api/test/viewResults"))
-//               .andExpect(status().isOk())
-//               .andExpect(view().name("viewresult"))
-//               .andExpect(model().attributeExists("list"));
-//    }
+	        when(testService.submitTest(anyInt(), Mockito.anyMap())).thenReturn(testResult);
 
-    // ---------- REST Endpoints ----------
+	        mockMvc.perform(post("/api/test/submit-test/{sequenceNumber}", 1)
+	                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+	                        .param("question_1", "A")
+	                        .param("userName", "John Doe"))
+	                .andExpect(status().isOk())
+	                .andExpect(model().attributeExists("result"))
+	                .andExpect(view().name("viewresult"));
+	    }
 
-    @Test
-    void submitTest_shouldReturnOkWithServiceResponse() throws Exception {
-    	SubmitTestDTO submitDto = new SubmitTestDTO();
-        TestResultDTO resultDto = new TestResultDTO();
+	    @Test
+	    void testViewResults() throws Exception {
+	        when(testService.getAllTestResults()).thenReturn(Collections.singletonList(testResult));
 
-        when(testService.submitTest(any(SubmitTestDTO.class))).thenReturn(resultDto);
-
-        mockMvc.perform(post("/api/test/submit-test")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(submitDto)))
-               .andExpect(status().isOk())
-               .andExpect(content().json(objectMapper.writeValueAsString(resultDto)));
-    
-    }
-
-    @Test
-    void getAllTestResultsOfUser_shouldReturnOkWithServiceResponse() throws Exception {
-    	List<TestResultDTO> resultsDto = Arrays.asList(new TestResultDTO());
-        when(testService.getAllTestResultsOfUser(1L)).thenReturn(resultsDto);
-
-        mockMvc.perform(get("/api/test/test-result/1"))
-               .andExpect(status().isOk())
-               .andExpect(content().json(objectMapper.writeValueAsString(resultsDto)));
-    	
-    	
-    }
-
-//    @Test
-//    void getAllTestResultsOfUser_shouldReturnBadRequestOnException() throws Exception {
-//        when(testService.getAllTestResultsOfUser(1L)).thenThrow(new RuntimeException("User not found"));
-//
-//        mockMvc.perform(get("/api/test/test-result/1"))
-//               .andExpect(status().isBadRequest())
-//               .andExpect(content().string("User not found"));
-//    }
-
+	        mockMvc.perform(get("/api/test/viewResults"))
+	                .andExpect(status().isOk())
+	                .andExpect(model().attributeExists("results"))
+	                .andExpect(view().name("viewresult"));
+	    }
 }
