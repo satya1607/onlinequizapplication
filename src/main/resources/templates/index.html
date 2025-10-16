@@ -13,7 +13,7 @@
             display: flex;
             justify-content: space-between; /* Space between left and right items */
             align-items: center;
-              background-color: #333;
+              background-color: blue;
             padding: 10px 20px;
         }
 .navbar.brand {
@@ -36,17 +36,17 @@
 
 <nav class="navbar">
     <!-- Left Corner: Brand / Heading -->
-    <a href="/" class="brand">MyApp</a>
+    <a href="/" class="brand">Online Quiz Application</a>
 
     <!-- Right Corner: Login & Signup -->
     <div class="nav-links">
         <!-- Using Thymeleaf 'th:href' to generate dynamic URLs -->
         <a th:href="@{/login}">Login</a>
-        <a th:href="@{/signup}">Sign Up</a>
+        <a th:href="@{/register}">Sign Up</a>
     </div>
 </nav>
 <div>
-    <h1>Welcome to MyApp</h1>
+    <h1>Welcome to Online Quiz Application</h1>
     <p>Use the navbar above to navigate</p>
 </div>
 

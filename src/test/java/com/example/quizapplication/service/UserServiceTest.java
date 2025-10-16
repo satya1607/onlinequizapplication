@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.quizapplication.entity.User;
 import com.example.quizapplication.enums.UserRole;
@@ -28,90 +29,52 @@ import com.example.quizapplication.repository.UserRepository;
 class UserServiceTest {
 
 	@Mock
-	private UserRepository userRepository;
+    private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
-	@InjectMocks
-	private UserServiceImpl userService;
+    @InjectMocks
+    private UserServiceImpl userService;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-	@BeforeEach
-	void setUp() {
-	MockitoAnnotations.openMocks(this);
-	}
+    @Test
+    void testCreateUser_Success() {
+        User user = new User();
+        user.setPassword("plain");
 
+        when(passwordEncoder.encode("plain")).thenReturn("encoded");
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-	@Test
-	void testCreateAdminUser_WhenAdminDoesNotExist_ShouldCreateAdmin() {
-	when(userRepository.findByRole(UserRole.ADMIN)).thenReturn(null);
+        userService.createUser(user);
 
+        assertEquals("encoded", user.getPassword());
+        verify(userRepository, times(1)).save(user);
+    }
 
-	userService.createAdminUser();
-	verify(userRepository, times(1)).save(any(User.class));
-	}
+    @Test
+    void testLogin_Success() {
+        User user = new User();
+        user.setEmail("test@gmail.com");
 
+        when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(user));
 
-	@Test
-	void testCreateAdminUser_WhenAdminExists_ShouldNotCreateAdmin() {
-	User admin = new User();
-	admin.setRole(UserRole.ADMIN);
-	when(userRepository.findByRole(UserRole.ADMIN)).thenReturn(admin);
+        User result = userService.login("test@gmail.com");
 
+        assertNotNull(result);
+        assertEquals("test@gmail.com", result.getEmail());
+        verify(userRepository, times(1)).findByEmail("test@gmail.com");
+    }
 
-	userService.createAdminUser();
+    @Test
+    void testLogin_UserNotFound() {
+        when(userRepository.findByEmail("missing@gmail.com")).thenReturn(Optional.empty());
 
-
-	verify(userRepository, never()).save(any(User.class));
-	}
-
-
-	@Test
-	void testHasUserWithEmail_WhenUserExists_ShouldReturnTrue() {
-	when(userRepository.findFirstByEmail("test@example.com")).thenReturn(new User());
-
-
-	assertTrue(userService.hasUserWithEmail("test@example.com"));
-	}
-	@Test
-	void testHasUserWithEmail_WhenUserDoesNotExist_ShouldReturnFalse() {
-	when(userRepository.findFirstByEmail("notfound@example.com")).thenReturn(null);
-
-
-	assertFalse(userService.hasUserWithEmail("notfound@example.com"));
-	}
-
-
-	@Test
-	void testCreateUser_ShouldAssignUserRoleAndSave() {
-	User user = new User();
-	user.setRole(null);
-
-
-	userService.createUser(user);
-
-
-	assertEquals(UserRole.USER, user.getRole());
-	verify(userRepository, times(1)).save(user);
-	}
-
-
-	@Test
-	void testLogin_WhenUserExists_ShouldReturnUser() {
-	User user = new User();
-	user.setEmail("login@example.com");
-	when(userRepository.findByEmail("login@example.com")).thenReturn(Optional.of(user));
-	User result = userService.login("login@example.com");
-	assertNotNull(result);
-	assertEquals("login@example.com", result.getEmail());
-	}
-
-
-	@Test
-	void testLogin_WhenUserNotFound_ShouldThrowException() {
-	when(userRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
-
-
-	assertThrows(UserNotFoundException.class, () -> userService.login("missing@example.com"));
-	}
+        assertThrows(UserNotFoundException.class, () -> userService.login("missing@gmail.com"));
+    }
 	}
 

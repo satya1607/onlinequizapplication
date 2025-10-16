@@ -2,16 +2,17 @@ package com.example.quizapplication.dto;
 
 public class TestResultDTO {
 
-	private Long id;
+	private String id;
 	private int totalQuestions;
 	private int correctAnswers;
 	private double percentage;
 	private String testName;
 	private String userName;
-	public Long getId() {
+	
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public int getTotalQuestions() {

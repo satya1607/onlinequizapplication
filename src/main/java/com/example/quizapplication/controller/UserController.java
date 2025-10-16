@@ -1,5 +1,7 @@
 package com.example.quizapplication.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +14,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.quizapplication.entity.TestPOJO;
 import com.example.quizapplication.entity.User;
 import com.example.quizapplication.enums.UserRole;
 import com.example.quizapplication.exception.UserNotFoundException;
 import com.example.quizapplication.repository.UserRepository;
+import com.example.quizapplication.service.TestService;
 import com.example.quizapplication.service.UserService;
 //import com.example.realestateproject.entity.UserInfo;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -29,11 +35,13 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private TestService testService;
 	
-	 @GetMapping("/signup")
+	 @GetMapping("/register")
 	    public String showRegisterForm(Model model){
 	        model.addAttribute("user",new User());
-	        return "signup";
+	        return "register";
 	    }
 	    
 	
@@ -50,7 +58,7 @@ public class UserController {
 //			
 //		}
 //		return new ResponseEntity<>(createdUser,HttpStatus.OK);
-		return "/login";
+		return "redirect:/login";
 	}
 	
 	 @GetMapping("/login")
@@ -58,19 +66,32 @@ public class UserController {
 	        return "login";
 	    }
 	 
-	 @GetMapping("/admindashboard")
-	    public String showAdminDashboard(){
-	        return "admindashboard";
-	    }
+//	 @GetMapping("/admindashboard")
+//	    public String showAdminDashboard(){
+//	        return "admindashboard";
+//	    }
 	
-	@PostMapping({"/login"})
-	public String login(@ModelAttribute User user){
-		User dbUser=userService.login(user.getEmail());
+//	@PostMapping({"/login"})
+//	public String login(@ModelAttribute User user,Model model){
+//		User dbUser=userService.login(user.getEmail());
+//		
+//		if (dbUser == null) {
+//            model.addAttribute("error", "Invalid email or password!");
+//            return "login"; // stay on login page if failed
+//        }
+
+        // redirect based on role
+//        if ("ADMIN".equals(dbUser.getRole())) {
+//            return "redirect:/admindashboard";
+//        } else {
+//            return "redirect:/userdashboard";
+//        }
+		
 //		if(dbUser==null) 
 //			return "Wrong conditionals";
 //		if(dbUser!=null) {
 //		if(UserRole.ADMIN != null)){
-		return "admindashboard";
+//		return "admindashboard";
 //		}
 //		else {
 //			return "userdashboard";
@@ -78,6 +99,50 @@ public class UserController {
 //		}
 //		return null;
 		
-	}
-	
+//	}
+	 @GetMapping("/userdashboard")
+	    public String showUserDashboard(Model model){
+		 List<TestPOJO> list = testService.getAllTests();
+	        model.addAttribute("list", list);
+	        return "userdashboard";
+	    }
+	 
+	 @PostMapping("/login")
+	 public String login(@RequestParam String email,
+	                     @RequestParam String password,
+	                     @RequestParam String role,
+	                     Model model,
+	                     HttpSession session) {
+
+	     try {
+	         // Fetch user from DB
+	         User dbUser = userService.login(email);
+
+	         // Check password
+	         if (!dbUser.getPassword().equals(password)) {
+	             model.addAttribute("error", "Invalid password!");
+	             return "login";
+	         }
+
+	         // Check role
+	         if (!dbUser.getRole().name().equals(role)) {
+	             model.addAttribute("error", "Role mismatch!");
+	             return "login";
+	         }
+
+	         // Save user info in session (optional)
+	         session.setAttribute("loggedInUser", dbUser);
+
+	         // Redirect based on role
+	         if (dbUser.getRole() == UserRole.ADMIN) {
+	             return "redirect:/admindashboard";
+	         } else {
+	             return "redirect:/userdashboard";
+	         }
+
+	     } catch (Exception e) {
+	         model.addAttribute("error", "User not found!");
+	         return "login";
+	     }
+	 }
 }

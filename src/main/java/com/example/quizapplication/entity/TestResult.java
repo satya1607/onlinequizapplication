@@ -10,11 +10,38 @@ import com.example.quizapplication.dto.TestResultDTO;
 public class TestResult {
 	
     @Id
-	private Long id;
+	private String id;
 	private int totalQuestions;
 	private int correctAnswers;
 	private double percentage;
 	
+	private String testName;
+    private String userName;
+    private int testSequenceNumber;
+	
+	public int getTestSequenceNumber() {
+		return testSequenceNumber;
+	}
+
+	public void setTestSequenceNumber(int testSequenceNumber) {
+		this.testSequenceNumber = testSequenceNumber;
+	}
+
+	public String getTestName() {
+		return testName;
+	}
+
+	public void setTestName(String testName) {
+		this.testName = testName;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 	@DBRef
 	private TestPOJO testPOJO;
 	
@@ -33,12 +60,15 @@ public class TestResult {
 		return dto;
 	}
 	
-	public Long getId() {
+	
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+
+	public void setId(String id) {
 		this.id = id;
 	}
+
 	public int getTotalQuestions() {
 		return totalQuestions;
 	}

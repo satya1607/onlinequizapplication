@@ -7,93 +7,60 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.example.quizapplication.dto.QuestionDTO;
 
-@Document(collection="Question")
+@Document(collection = "Question")
 public class Question {
-    @Id
-	private String id;
-    @Indexed(unique = true) 
-    private String testid;
-	private String questionText;
-	private String optionA;
-	private String optionB;
-	public String getTestid() {
-		return testid;
-	}
-	public void setTestid(String testid) {
-		this.testid = testid;
-	}
-	private String optionC;
-	private String optionD;
-	private String correctOption;
-	@DBRef
-	private TestPOJO testPOJO;
-	
-	public QuestionDTO getDto() {
-		QuestionDTO dto=new QuestionDTO();
-		dto.setId(id);
-		dto.setQuestionText(questionText);
-		dto.setOptionA(optionA);
-		dto.setOptionB(optionB);
-		dto.setOptionC(optionC);
-		dto.setOptionD(optionD);
-		dto.setCorrectOption(correctOption);
-		return dto;
-	}
-//	public Long getId() {
-//		return id;
-//	}
-//	public void setId(Long id) {
-//		this.id = id;
-//	}
-	public String getQuestionText() {
-		return questionText;
-	}
-	
-	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setQuestionText(String questionText) {
-		this.questionText = questionText;
-	}
-	public String getOptionA() {
-		return optionA;
-	}
-	public void setOptionA(String optionA) {
-		this.optionA = optionA;
-	}
-	public String getOptionB() {
-		return optionB;
-	}
-	public void setOptionB(String optionB) {
-		this.optionB = optionB;
-	}
-	public String getOptionC() {
-		return optionC;
-	}
-	public void setOptionC(String optionC) {
-		this.optionC = optionC;
-	}
-	public String getOptionD() {
-		return optionD;
-	}
-	public void setOptionD(String optionD) {
-		this.optionD = optionD;
-	}
-	public String getCorrectOption() {
-		return correctOption;
-	}
-	public void setCorrectOption(String correctOption) {
-		this.correctOption = correctOption;
-	}
-	public TestPOJO getTest() {
-		return testPOJO;
-	}
-	public void setTest(TestPOJO testPOJO) {
-		this.testPOJO = testPOJO;
-	}
-	
+	 @Id
+	    private String id; // numeric ID
+	    private String testId; // reference to test numeric ID
+	    private String questionText;
+	    private String optionA;
+	    private String optionB;
+	    private String optionC;
+	    private String optionD;
+	    private String correctOption;
+	    private String testSequenceNumber;
+	    
+	    public String getTestSequenceNumber() {
+			return testSequenceNumber;
+		}
+		public void setTestSequenceNumber(String testSequenceNumber) {
+			this.testSequenceNumber = testSequenceNumber;
+		}
+		public TestPOJO getTest() {
+			return test;
+		}
+		public void setTest(TestPOJO test) {
+			this.test = test;
+		}
+		@DBRef
+	    private TestPOJO test;
+
+	    // Getters and Setters
+	   
+	    
+	    public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		
+	    public String getTestId() {
+			return testId;
+		}
+		public void setTestId(String testId) {
+			this.testId = testId;
+		}
+		public String getQuestionText() { return questionText; }
+	    public void setQuestionText(String questionText) { this.questionText = questionText; }
+	    public String getOptionA() { return optionA; }
+	    public void setOptionA(String optionA) { this.optionA = optionA; }
+	    public String getOptionB() { return optionB; }
+	    public void setOptionB(String optionB) { this.optionB = optionB; }
+	    public String getOptionC() { return optionC; }
+	    public void setOptionC(String optionC) { this.optionC = optionC; }
+	    public String getOptionD() { return optionD; }
+	    public void setOptionD(String optionD) { this.optionD = optionD; }
+	    public String getCorrectOption() { return correctOption; }
+	    public void setCorrectOption(String correctOption) { this.correctOption = correctOption; }
 }

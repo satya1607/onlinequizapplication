@@ -3,6 +3,7 @@ package com.example.quizapplication.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 //import com.example.quizapplication.controller.UserDetails;
@@ -18,36 +19,48 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class UserServiceImpl implements UserService{
      
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 	
-	@PostConstruct
-	public void createAdminUser() {
-		User optionalUser=userRepository.findByRole(UserRole.ADMIN);
-		if(optionalUser==null) {
-			User user=new User();
-//			user.setName("Admin");
-//			user.setEmail("admin@gmail.com");
-//			user.setPassword("admin");
-			user.setRole(UserRole.ADMIN);
-		userRepository.save(user);
-		}
-	}
+//	@Autowired
+//	private UserRepository userRepository;
+//	 @Autowired
+//	    private PasswordEncoder passwordEncoder;
 	
-	public Boolean hasUserWithEmail(String email) {
-		return userRepository.findFirstByEmail(email)!=null;
-	
-	}
+//	@PostConstruct
+//	public void createAdminUser() {
+//		User optionalUser=userRepository.findByRole(UserRole.ADMIN);
+//		if(optionalUser==null) {
+//			User user=new User();
+////			user.setName("Admin");
+////			user.setEmail("admin@gmail.com");
+////			user.setPassword("admin");
+//			user.setRole(UserRole.ADMIN);
+//		userRepository.save(user);
+//		}
+//	}
+//	
+//	public Boolean hasUserWithEmail(String email) {
+//		return userRepository.findFirstByEmail(email)!=null;
+//	
+//	}
 	public void createUser(User user) {
-		user.setRole(UserRole.USER);
+//		user.setRole(UserRole.USER);
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
 	}
 	
 	public User login(String email) {
 		User user=userRepository.findByEmail(email)
-				.orElseThrow(() -> new UserNotFoundException("User not found in database."));
+				.orElseThrow(() ->  new UserNotFoundException("User not found in database"));
 		
-	   return user;
+	 return user;
 		
 	}
 	

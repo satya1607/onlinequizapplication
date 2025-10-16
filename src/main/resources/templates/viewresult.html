@@ -17,12 +17,12 @@
 </thead>
 <tbody>
 
-<tr th:each="l : ${list}">
-<td th:text="${list.testName}">TestName</td>
-<td th:text="${list.userName}">UserName</td>
-<td th:text="${list.totalQuestions}">TotalQuestions</td>
-<td th:text="${list.correctAnswers}">CorrectAnswers</td>
-<td th:text="${list.percentage}">Percentage</td>
+<tr th:each="l : ${result}">
+<td th:text="${l.testName}">TestName</td>
+<td th:text="${l.userName}">UserName</td>
+<td th:text="${l.totalQuestions}">TotalQuestions</td>
+<td th:text="${l.correctAnswers}">CorrectAnswers</td>
+<td th:text="${l.percentage}">Percentage</td>
 </tr>
 </tbody>
 </table>

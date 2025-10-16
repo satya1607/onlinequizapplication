@@ -1,6 +1,7 @@
 package com.example.quizapplication.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.example.quizapplication.dto.QuestionDTO;
@@ -13,11 +14,12 @@ import com.example.quizapplication.entity.TestPOJO;
 import com.example.quizapplication.entity.TestResult;
 
    public interface TestService{
-	void createTest(TestPOJO testPOJO);
-	Question addQuestionInTest(Question dto);
+	   void createTest(TestPOJO testPOJO);
+	   Question addQuestionToTest(int sequenceNumber, Question question);
+	   TestPOJO getTestBySequenceNumber(int sequenceNumber);
 	List<TestPOJO> getAllTests();
-	Optional<TestPOJO> getAllQuestionsByTest(String id);
-	TestResultDTO submitTest(SubmitTestDTO request);
+	List<Question> getQuestionsByTestNumber(int sequenceNumber);
+	TestResult submitTest(int testSequenceNumber, Map<String, String> answers);
 	List<TestResult> getAllTestResults();
 	List<TestResultDTO> getAllTestResultsOfUser(Long userId);
 }
