@@ -28,28 +28,7 @@ public class UserServiceImpl implements UserService{
         this.passwordEncoder = passwordEncoder;
     }
 	
-//	@Autowired
-//	private UserRepository userRepository;
-//	 @Autowired
-//	    private PasswordEncoder passwordEncoder;
-	
-//	@PostConstruct
-//	public void createAdminUser() {
-//		User optionalUser=userRepository.findByRole(UserRole.ADMIN);
-//		if(optionalUser==null) {
-//			User user=new User();
-////			user.setName("Admin");
-////			user.setEmail("admin@gmail.com");
-////			user.setPassword("admin");
-//			user.setRole(UserRole.ADMIN);
-//		userRepository.save(user);
-//		}
-//	}
-//	
-//	public Boolean hasUserWithEmail(String email) {
-//		return userRepository.findFirstByEmail(email)!=null;
-//	
-//	}
+
 	public void createUser(User user) {
 //		user.setRole(UserRole.USER);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
