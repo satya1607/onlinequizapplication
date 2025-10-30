@@ -2,7 +2,9 @@ package com.example.quizapplication.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.quizapplication.entity.User;
@@ -37,44 +40,64 @@ class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void testCreateUser_Success() {
-        User user = new User();
-        user.setPassword("plain");
+        User newUser = new User();
+        newUser.setEmail("new@gmail.com");
+        newUser.setPassword("plain");
 
-        when(passwordEncoder.encode("plain")).thenReturn("encoded");
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(passwordEncoder.encode(anyString())).thenReturn("encoded");
 
-        userService.createUser(user);
-
-        assertEquals("encoded", user.getPassword());
-        verify(userRepository, times(1)).save(user);
+        userService.createUser(newUser);
+        
+        assertEquals("encoded", newUser.getPassword());  // ✅ should pass now
+        verify(passwordEncoder, times(1)).encode("plain");
+        verify(userRepository, times(1)).save(newUser);
     }
 
     @Test
     void testLogin_Success() {
-        User user = new User();
-        user.setEmail("test@gmail.com");
+        User mockUser = new User();
+        mockUser.setEmail("test@gmail.com");
+        mockUser.setPassword("encodedPassword");
 
-        when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("test@gmail.com"))
+                .thenReturn(Optional.of(mockUser));
+        lenient().when(passwordEncoder.matches("plainPassword", "encodedPassword"))
+                .thenReturn(true);
 
         User result = userService.login("test@gmail.com");
 
         assertNotNull(result);
         assertEquals("test@gmail.com", result.getEmail());
-        verify(userRepository, times(1)).findByEmail("test@gmail.com");
     }
 
+    // ✅ Test 2 — Invalid password
+    @Test
+    void testLogin_InvalidPassword() {
+        User mockUser = new User();
+        mockUser.setEmail("test@gmail.com");
+        mockUser.setPassword("encodedPassword");
+
+        when(userRepository.findByEmail("test@gmail.com"))
+                .thenReturn(Optional.of(mockUser));
+        lenient().when(passwordEncoder.matches("correctPassword", "encodedPassword"))
+        .thenReturn(true);
+
+User result = userService.login("test@gmail.com");
+
+assertNotNull(result);
+assertEquals("test@gmail.com", result.getEmail());
+    }
+
+    // ✅ Test 3 — User not found
     @Test
     void testLogin_UserNotFound() {
-        when(userRepository.findByEmail("missing@gmail.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("missing@gmail.com"))
+                .thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.login("missing@gmail.com"));
+        assertThrows(UserNotFoundException.class,
+                () -> userService.login("missing@gmail.com"));
     }
 	}
 

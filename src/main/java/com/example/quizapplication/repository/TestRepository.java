@@ -10,5 +10,5 @@ import com.example.quizapplication.entity.TestPOJO;
 @Repository
 public interface TestRepository extends MongoRepository<TestPOJO, String> {
 
-	 TestPOJO findBySequenceNumber(int sequenceNumber);
+	 TestPOJO findBySequenceNumber(int testSeq);
 }

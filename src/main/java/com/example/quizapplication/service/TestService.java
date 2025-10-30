@@ -21,5 +21,5 @@ import com.example.quizapplication.entity.TestResult;
 	List<Question> getQuestionsByTestNumber(int sequenceNumber);
 	TestResult submitTest(int testSequenceNumber, Map<String, String> answers);
 	List<TestResult> getAllTestResults();
-	List<TestResultDTO> getAllTestResultsOfUser(Long userId);
+	List<TestResultDTO> getAllTestResultsOfUser(String userId);
 }

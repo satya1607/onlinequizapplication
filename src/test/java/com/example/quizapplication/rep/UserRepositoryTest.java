@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.support.BeanDefinitionDsl.Role;
@@ -22,7 +23,7 @@ import com.example.quizapplication.entity.User;
 import com.example.quizapplication.enums.UserRole;
 import com.example.quizapplication.repository.UserRepository;
 
-
+@DataMongoTest
 class UserRepositoryTest {
 
    	 @Mock

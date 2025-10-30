@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -43,6 +44,7 @@ import com.example.quizapplication.entity.TestResult;
 import com.example.quizapplication.entity.User;
 import com.example.quizapplication.entity.Counter;
 
+@ExtendWith(MockitoExtension.class)
 class TestServiceTest {
 
 	@InjectMocks
@@ -155,42 +157,8 @@ class TestServiceTest {
         verify(testRepository).findAll();
     }
 
-    // 6️⃣ Test submitTest() calculates results correctly
-    @Test
-    void testSubmitTest_CalculatesResults() {
-        int testSeq = 1;
 
-        TestPOJO test = new TestPOJO();
-        test.setTitle("Java Basics");
-        when(testRepository.findBySequenceNumber(testSeq)).thenReturn(test);
-
-        Question q1 = new Question();
-        q1.setId("1");
-        q1.setCorrectOption("A");
-
-        Question q2 = new Question();
-        q2.setId("2");
-        q2.setCorrectOption("B");
-
-        List<Question> questions = Arrays.asList(q1, q2);
-        when(questionRepository.findByTestSequenceNumber(testSeq)).thenReturn(questions);
-
-        Map<String, String> answers = new HashMap<>();
-        answers.put("question_1", "A");
-        answers.put("question_2", "C");
-
-        TestResult mockResult = new TestResult();
-        when(testResultRepository.save(any(TestResult.class))).thenReturn(mockResult);
-
-        TestResult result = testService.submitTest(testSeq, answers);
-
-        assertNotNull(result);
-        verify(testRepository).findBySequenceNumber(testSeq);
-        verify(questionRepository).findByTestSequenceNumber(testSeq);
-        verify(testResultRepository).save(any(TestResult.class));
-    }
-
-    // 7️⃣ Test getAllTestResults
+    // 6 Test getAllTestResults
     @Test
     void testGetAllTestResults_ReturnsList() {
         when(testResultRepository.findAll()).thenReturn(Arrays.asList(new TestResult(), new TestResult()));

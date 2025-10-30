@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import com.example.quizapplication.dto.TestResultDTO;
 import com.example.quizapplication.entity.Question;
 import com.example.quizapplication.entity.TestPOJO;
 import com.example.quizapplication.entity.TestResult;
+import com.example.quizapplication.repository.QuestionRepository;
 import com.example.quizapplication.repository.TestRepository;
 import com.example.quizapplication.service.TestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @WebMvcTest(TestController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class TestControllerTest {
 
 	 @Autowired
@@ -44,7 +47,11 @@ class TestControllerTest {
 
 	    @MockBean
 	    private TestService testService;
-
+        @MockBean
+        private TestRepository testRepository;
+        @MockBean
+        private QuestionRepository questionRepository;
+        
 	    private TestPOJO testPOJO;
 	    private Question question;
 	    private TestResult testResult;

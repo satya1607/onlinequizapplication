@@ -12,5 +12,5 @@ public interface QuestionRepository extends MongoRepository<Question,String>{
 
 	
 	List<Question> findByTestId(String testId);
-	List<Question> findByTestSequenceNumber(int testSequenceNumber);
+	List<Question> findByTestSequenceNumber(String testSequenceNumber);
 }

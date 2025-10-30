@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,8 @@ public class UserController {
 	private UserRepository userRepository;
 	@Autowired
 	private TestService testService;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	 @GetMapping("/register")
 	    public String showRegisterForm(Model model){
@@ -48,16 +51,8 @@ public class UserController {
 	@PostMapping("/register")
 	public String signUpUser(@ModelAttribute User user){
 		System.out.println("Method called");
-//		if(userService.hasUserWithEmail(user.getEmail())) {
-//			throw new UserNotFoundException("User Not Found");
-//			
-//		}
+
 		userService.createUser(user);
-//		if(createdUser==null) {
-//			return "User not created, come again later";
-//			
-//		}
-//		return new ResponseEntity<>(createdUser,HttpStatus.OK);
 		return "redirect:/login";
 	}
 	
@@ -66,22 +61,6 @@ public class UserController {
 	        return "login";
 	    }
 	 
-
-	 
-		
-//		if(dbUser==null) 
-//			return "Wrong conditionals";
-//		if(dbUser!=null) {
-//		if(UserRole.ADMIN != null)){
-//		return "admindashboard";
-//		}
-//		else {
-//			return "userdashboard";
-//		}
-//		}
-//		return null;
-		
-//	}
 	 @GetMapping("/userdashboard")
 	    public String showUserDashboard(Model model){
 		 List<TestPOJO> list = testService.getAllTests();
@@ -102,8 +81,10 @@ public class UserController {
 
 	         // Check password
 	         if (!dbUser.getPassword().equals(password)) {
+	        	 if(!passwordEncoder.matches(password,dbUser.getPassword())) {
 	             model.addAttribute("error", "Invalid password!");
 	             return "login";
+	        	 }
 	         }
 
 	         // Check role

@@ -26,16 +26,17 @@ public class TestPOJO {
 
     // Getters and Setters
     
+    
+	public String getTitle() {
+        return title;
+    }
     public int getSequenceNumber() {
 		return sequenceNumber;
 	}
 	public void setSequenceNumber(int sequenceNumber) {
 		this.sequenceNumber = sequenceNumber;
 	}
-	public String getTitle() {
-        return title;
-    }
-    public String getId() {
+	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
