@@ -1,11 +1,15 @@
-# Stage 1: Build the app using Maven
-FROM maven:3.8.4-openjdk-17 AS build
-WORKDIR /app
+#
+# Build stage
+#
+FROM maven:3.8.3-openjdk-17 AS build
 COPY . .
-RUN mvn clean package -DskipTests
+RUN mvn clean install
 
-# Stage 2: Run the app
-FROM openjdk:17
-COPY --from=build /app/target/*.jar quizapplication-0.0.1-SNAPSHOT.jar
+#
+# Package stage
+#
+FROM eclipse-temurin:17-jdk
+COPY --from=build /target/quizapplication-0.0.1-SNAPSHOT.jar demo.jar
+# ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "quizapplication-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","demo.jar"]
